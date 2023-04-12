@@ -1,10 +1,12 @@
 ;; LUMP PARSER
 
+; String from characters
 (defun sfc (&rest chars)
     (let ((s ""))
          (dolist (c chars s)
              (setq s (concatenate 'string s (string c))))))
 
+; Python style split function
 (defun split-at (string splitter &optional maxsplit)
     (reverse
          (let ((bits nil) (splitcount 0) (spl (length splitter)) (spi nil))
@@ -17,6 +19,7 @@
                   (if (and maxsplit (>= splitcount maxsplit)) (return bits)))
               (push string bits))))
 
+; Only works on ALL of the request from the client
 (defun parse-http (http)
     (let* ((s-hb (split-at http (sfc #\Return #\Newline) 1))
            (start-line (first s-hb))
@@ -30,7 +33,7 @@
            (split-start (split-at start-line " "))
            (method (first split-start))
            (target (second split-start)))
-           ;; http version is ignored
+           ; http version is ignored
           (list method target headers body)))
 
 ;; INCREMENTAL PARSER TODO
