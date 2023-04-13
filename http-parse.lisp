@@ -1,8 +1,9 @@
+(defun cat (&rest x) (eval (cons 'concatenate (cons ''string  x))))
 (defun url-decode (s)
     (if (string= "" s) ""
         (if (eq (char s 0) #\%)
-            (concatenate 'string (string (code-char (read-from-string (concatenate 'string "#x" (subseq s 1 3))))) (url-decode (subseq s 3)))
-            (concatenate 'string (subseq s 0 1) (url-decode (subseq s 1))))))
+            (cat (string (code-char (read-from-string (cat "#x" (subseq s 1 3))))) (url-decode (subseq s 3)))
+            (cat (subseq s 0 1) (url-decode (subseq s 1))))))
 
 ;; LUMP PARSER
 
