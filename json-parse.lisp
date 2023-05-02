@@ -7,13 +7,13 @@
 (defun skip-whitespace (str)
     (let (ch)
          (loop
-             (setq ch (peek-char t str))
+             (setq ch (peek-char nil str))
              (if (whitespace-char-p ch)
-                 (read-char stream)
+                 (read-char str)
                  (return)))))
 
 (defun expect-char (str ch &optional (xp ch))
-    (if (eq (peek-char t str) ch) (read-char str) (error "unexpected ~c (expected ~a)" (peek-char t str) xp)))
+    (if (eq (peek-char nil str) ch) (read-char str) (error "unexpected ~c (expected ~a)" (read-char str) xp)))
 
 (defun json-parse-list (str &optional rest)
     (expect-char str #\[)
@@ -22,7 +22,7 @@
             (skip-whitespace str)
             (let* ((itm (json-parse str)))
                 (skip-whitespace str)
-                (case (peek-char t str)
+                (case (peek-char nil str)
                     (#\]
                         (read-char str)
                         (return (cons itm rest)))
@@ -30,7 +30,7 @@
                         (read-char str)
                         (push itm rest))
                     (t
-                        (error "unexpected ~c after list item" (peek-char t str))))))))
+                        (error "unexpected ~c after list item" (read-char str))))))))
 
 (defun json-parse-object (str &optional rest) 
     (expect-char str #\{)
@@ -44,7 +44,7 @@
                 (skip-whitespace str)
                 (setq obj (cons key (json-parse str)))
                 (skip-whitespace str)
-                (case (peek-char t str)
+                (case (peek-char nil str)
                     (#\}
                         (read-char str)
                         (return (cons obj rest)))
@@ -52,7 +52,7 @@
                         (read-char str)
                         (push obj rest))
                     (t
-                        (error "unexpected ~c after object entry" (peek-char t str))))))))
+                        (error "unexpected ~c after object entry" (read-char str))))))))
 
 (defun json-get-hex-escape (str)
     (let ((xs '(nil nil nil nil))
@@ -92,7 +92,7 @@
     (expect-char str #\")
     (let ((ch nil) (cstr ""))
         (loop
-            (case (peek-char t str)
+            (case (peek-char nil str)
                 (#\\
                     (setq ch (json-parse-escape-char str)))
                 (#\"
@@ -103,7 +103,7 @@
             (setq cstr (concatenate 'string cstr (string ch))))))
 
 (defun json-parse-number (str)
-    (if (null (search (list (peek-char t str)) '(#\- #\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9))) (error "unexpected ~c" (read-char str)))
+    (if (null (search (list (peek-char nil str)) '(#\- #\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9))) (error "unexpected ~c" (read-char str)))
     (let ((digits '(#\0))
           (decimal '(#\0))
           (exponent '(#\0))
@@ -111,7 +111,7 @@
           (expnegp nil)
           (phase 'initial))
         (loop
-            (case (peek-char t str)
+            (case (peek-char nil str)
                 ((#\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)
                     (case phase
                         ((initial digits)
@@ -168,7 +168,7 @@
                 exponent))))
 
 (defun json-parse-boolean (str)
-    (case (peek-char t str)
+    (case (peek-char nil str)
         (#\t
             (expect-char str #\t)
             (expect-char str #\r)
@@ -193,7 +193,7 @@
 
 (defun json-parse (str)
     (skip-whitespace str)
-    (case (peek-char t str)
+    (case (peek-char nil str)
         (#\[
             (json-parse-list str))
         (#\{
