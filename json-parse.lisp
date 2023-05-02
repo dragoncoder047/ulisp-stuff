@@ -1,3 +1,6 @@
+;;;; NOTE:
+;;;; This doesn't work with uLisp until (peek-char) support is added.
+
 (defun whitespace-char-p (ch)
     (if (search (list ch) '(#\Space #\Newline #\Return #\Tab)) t nil))
 
