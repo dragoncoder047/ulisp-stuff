@@ -17,3 +17,7 @@
 (test "`(foo ,lis ,num)") ;; (foo (1 2 3) 1)
 (test "`(foo ,@lis ,num)") ;; (foo 1 2 3 1)
 (test "`(foo ,lis ,@num)") ;; (foo (1 2 3) . 1)
+
+;; The quine test: should evaluate to itself:
+(let ((let '`(let ((let ',let)) ,let))) `(let ((let ',let)) ,let))
+;; source: https://3e8.org/pub/scheme/doc/Quasiquotation%20in%20Lisp%20(Bawden).pdf
