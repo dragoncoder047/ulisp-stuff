@@ -1,4 +1,4 @@
-(defun cat (&rest x) (eval (cons 'concatenate (cons ''string  x))))
+(defmacro cat (&rest x) `(concatenate 'string ,@x))
 (defun url-decode (s)
     (if (string= "" s) ""
         (if (eq (char s 0) #\%)
